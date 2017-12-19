@@ -225,6 +225,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Assets\Script\Conn.cs" />
     <Compile Include="Assets\Script\Follow.cs" />
     <Compile Include="Assets\Script\Net.cs" />
     <Compile Include="Assets\Script\Player.cs" />
