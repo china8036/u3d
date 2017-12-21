@@ -5,6 +5,8 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
 
+
+
 	// Use this for initialization
 	void Start ()
 	{
@@ -14,7 +16,10 @@ public class Player : MonoBehaviour
 	// Update is called once per frame
 	void Update ()
 	{
-		Vector3 go = new Vector3();
+        if (Input.GetKeyDown(KeyCode.Space)) {
+            Net.GetNetWork().Send("Hello im a player");
+        }
+        Vector3 go = new Vector3();
 		if (Input.GetKey (KeyCode.UpArrow)) {
 			go = new Vector3 (0.0f, 1.0f, 0.0f);
 		}
