@@ -1,3 +1,4 @@
 /Temp/*
 /obj/Debug
 /Library/PlayerDataCache
+/Library/il2cpp_cache
