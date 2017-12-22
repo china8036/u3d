@@ -2,3 +2,5 @@
 /obj/Debug
 /Library/PlayerDataCache
 /Library/il2cpp_cache
+/Library/ShaderCache
+/Library/webgl_cache
