@@ -2,7 +2,7 @@
 using UnityEngine;
 using System.Collections;
 using System.Net.Sockets;
-
+using System.Linq;
 
 public class Net : MonoBehaviour
 {
@@ -97,12 +97,15 @@ public class Net : MonoBehaviour
     public void Send(string msg)
         {
             msg += "\n";
+            Int32 len = (Int32) msg.Length;
+            byte[] length = BitConverter.GetBytes(len);
             byte[] byteData = System.Text.Encoding.Default.GetBytes(msg);
-            try
+            byte[] sendbuff  = length.Concat(byteData).ToArray();
+        try
             { 
 
-                //Debug.Log("Send:" + msg);
-                socket.Send(byteData);
+                Debug.Log("Send:" + sendbuff.ToString());
+                socket.Send(sendbuff);
             }
             catch (SocketException ex)
             {
