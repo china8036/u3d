@@ -8,7 +8,7 @@ public class Net : MonoBehaviour
 {
 
     //net gameobject name
-    const string NET_OB_NAME = "net";
+    const string NET_OB_NAME = "Net";
 
     //服务端套字节
     Socket socket;
@@ -26,7 +26,7 @@ public class Net : MonoBehaviour
 
 
     //消息监控
-    private ArrayList al;
+    private ArrayList al = new ArrayList();
 
 
     public void Connect()
@@ -35,11 +35,11 @@ public class Net : MonoBehaviour
         socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         socket.Connect(HOST, PORT);
         Log("客服端地址" + socket.LocalEndPoint.ToString());
+        HeartBeat();
         //byte[] bytes = System.Text.Encoding.Default.GetBytes (str);
         //socket.Send (bytes);
         //socket.EndSend (syncresult);
         //socket.Close ();
-        al = new ArrayList();
         socket.BeginReceive(readBuffer, 0, readBuffer.Length, SocketFlags.None, ReceiveCb, null);
         //socket.Close ();
     }
@@ -58,7 +58,7 @@ public class Net : MonoBehaviour
 
 
     //注册消息监听
-    void ListenMsg(NetListener nl) {
+    public void AddMsgListener(NetListener nl) {
         if (al.Contains(nl)) {
             return;
         }
@@ -78,10 +78,10 @@ public class Net : MonoBehaviour
             string str = System.Text.Encoding.UTF8.GetString(readBuffer, 0, count);
             if (al.Count > 0) {
                 foreach(NetListener nl in al) {
-                    nl.dealMsg(str);
+                    nl.DealMsg(str);
                 }
             }
-            Log(str);
+            Log("Recv:" + str);
             //if (recvStr.Length > 300) recvStr = "";
             //recvStr += str + "\n";
             //继续接收    
@@ -89,7 +89,7 @@ public class Net : MonoBehaviour
         }
         catch (Exception e)
         {
-            Log("连接已断开:" + e.Message);
+            Log("连接已断开:" + e.StackTrace);
             socket.Close();
         }
     }
@@ -101,7 +101,7 @@ public class Net : MonoBehaviour
             try
             { 
 
-                Debug.Log("Send:" + msg);
+                //Debug.Log("Send:" + msg);
                 socket.Send(byteData);
             }
             catch (SocketException ex)
@@ -118,9 +118,25 @@ public class Net : MonoBehaviour
                 handler.EndSend(ar);
             }
             catch (SocketException ex)
-            { }
+            {
+                Debug.Log(ex.Message);
+
+           }
         }
 
+
+    //执行心跳
+     void HeartBeat() {
+        System.Timers.Timer t = new System.Timers.Timer(1000);//实例化Timer类，设置间隔时间为10000毫秒；
+        t.Elapsed += new System.Timers.ElapsedEventHandler(OnHeartBeat);//到达时间的时候执行事件；
+        t.AutoReset = true;//设置是执行一次（false）还是一直执行(true)；
+        t.Enabled = true;//是否执行System.Timers.Timer.Elapsed事件；
+    }
+
+    void OnHeartBeat(object source, System.Timers.ElapsedEventArgs e)
+    {
+        Send("heartbeat");
+    }
 
 
     protected void Log(String msg) {

@@ -3,5 +3,5 @@
 public interface NetListener {
 
 
-    void dealMsg(string msg);
+    void DealMsg(string msg);
 }

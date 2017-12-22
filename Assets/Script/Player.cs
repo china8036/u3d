@@ -2,27 +2,32 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Player : MonoBehaviour
+public class Player : MonoBehaviour,NetListener
 {
 
+    private Net netWork;
 
 
 	// Use this for initialization
 	void Start ()
 	{
-		
-	}
+        netWork = Net.GetNetWork();
+        //netWork.AddMsgListener(this);
+
+    }
+
+    public void DealMsg(string msg) {
+        //Debug.Log("player have deal the msg:" + msg);
+    }
 	
 	// Update is called once per frame
 	void Update ()
 	{
-        if (Input.GetKeyDown(KeyCode.Space)) {
-            Net.GetNetWork().Send("Hello im a player");
-        }
+ 
         Vector3 go = new Vector3();
 		if (Input.GetKey (KeyCode.UpArrow)) {
 			go = new Vector3 (0.0f, 1.0f, 0.0f);
-		}
+		}  
 		if (Input.GetKey (KeyCode.DownArrow)) {
 			go = new Vector3 (0.0f, -1.0f, 0.0f);
 		}
@@ -34,5 +39,17 @@ public class Player : MonoBehaviour
 			go = new Vector3 (1.0f, 0.0f, 0.0f);
 		}
 		GetComponent<Transform> ().position += go * Time.deltaTime * 2f;
+        
 	}
+
+    void LateUpdate()
+    {
+        SendPosition();//发送位置信息
+    }
+
+
+    //发送位置
+    void SendPosition() {
+        netWork.Send(GetComponent<Transform>().position.x + " " + GetComponent<Transform>().position.y + " " + GetComponent<Transform>().position.z);
+    }
 }
