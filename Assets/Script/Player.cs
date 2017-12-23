@@ -50,6 +50,6 @@ public class Player : MonoBehaviour,NetListener
 
     //发送位置
     void SendPosition() {
-        netWork.Send(GetComponent<Transform>().position.x + " " + GetComponent<Transform>().position.y + " " + GetComponent<Transform>().position.z);
+        netWork.Send("pos " + GetComponent<Transform>().position.x + " " + GetComponent<Transform>().position.y + " " + GetComponent<Transform>().position.z);
     }
 }

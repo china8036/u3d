@@ -26,13 +26,13 @@ public class NetPlayer : MonoBehaviour, NetListener
     public void DealMsg(string msg)
     {
         string[] args = msg.Split(' ');
-        if (args.Length < 3) {
+        if (args.Length != 4 || args[0] != "pos") {
             return;
         }
-        mainPlayer.x = float.Parse(args[0]);
-        mainPlayer.y = float.Parse(args[1]);
-        mainPlayer.z = float.Parse(args[2]);
-        Debug.Log("net player receive msg:" + msg);
+        mainPlayer.x = float.Parse(args[1]);
+        mainPlayer.y = float.Parse(args[2]);
+        mainPlayer.z = float.Parse(args[3]);
+        Debug.Log("net player recv pos msg:" + msg);
     }
 
 }

@@ -42,12 +42,7 @@ public class Net : MonoBehaviour
         socket.Connect(HOST, PORT);
         Log("客服端地址" + socket.LocalEndPoint.ToString());
         HeartBeat();
-        //byte[] bytes = System.Text.Encoding.Default.GetBytes (str);
-        //socket.Send (bytes);
-        //socket.EndSend (syncresult);
-        //socket.Close ();
         socket.BeginReceive(readBuffer, 0, readBuffer.Length, SocketFlags.None, ReceiveCb, null);
-        //socket.Close ();
     }
 
 
@@ -91,28 +86,18 @@ public class Net : MonoBehaviour
                 readCount += count;
             }
 
-            if(readCount >= msgLen + 4)
+            if (readCount >= msgLen + 4)
             {
                 newMsg = true;
                 readCount = 0;
                 Log("recv msg length:" + msgLen.ToString());
                 byte[] tmpByte = new byte[msgLen];
-                //Array.Copy(readBuffer, 4, tmpByte,0, msgLen);
-                Log("recv msg:" + System.Text.Encoding.UTF8.GetString(readBuffer, 4, msgLen));
+                recvMsgHandler(System.Text.Encoding.UTF8.GetString(readBuffer, 4, msgLen));
             }
 
             if (readCount > readBuffer.Length) {
                 Log("Out of range:" + readCount +  "" + readBuffer.Length);
             }
-            //string str = System.Text.Encoding.UTF8.GetString(readBuffer, 0, count);
-           // if (al.Count > 0) {
-           //     foreach(NetListener nl in al) {
-           //         nl.DealMsg(str);
-            //    }
-            //}
-            //Log("Recv:" + str);
-            //if (recvStr.Length > 300) recvStr = "";
-            //recvStr += str + "\n";
             //继续接收    
             socket.BeginReceive(readBuffer, (int)readCount, readBuffer.Length - readCount, SocketFlags.None, ReceiveCb, null);
         }
@@ -123,6 +108,17 @@ public class Net : MonoBehaviour
             socket.Close();
         }
     }
+
+
+    void recvMsgHandler(string msg) {
+        Log("recv msg:" + msg);
+        if (al.Count > 0) {
+             foreach(NetListener nl in al) {
+                 nl.DealMsg(msg);
+            }
+        }
+    }
+
 
     public void Send(string msg)
         {
@@ -160,7 +156,7 @@ public class Net : MonoBehaviour
      void HeartBeat() {
         System.Timers.Timer t = new System.Timers.Timer(1000);//实例化Timer类，设置间隔时间为10000毫秒；
         t.Elapsed += new System.Timers.ElapsedEventHandler(OnHeartBeat);//到达时间的时候执行事件；
-        t.AutoReset = false;// true;//设置是执行一次（false）还是一直执行(true)；
+        t.AutoReset = true;// true;//设置是执行一次（false）还是一直执行(true)；
         t.Enabled = true;//是否执行System.Timers.Timer.Elapsed事件；
     }
 
