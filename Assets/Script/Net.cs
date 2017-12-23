@@ -24,6 +24,12 @@ public class Net : MonoBehaviour
 
     byte[] readBuffer = new byte[BUFFER_SIZE];
 
+    Boolean newMsg = true;
+
+    Int32 readCount = 0;
+
+    Int32 msgLen = 0;
+
 
     //消息监控
     private ArrayList al = new ArrayList();
@@ -75,35 +81,58 @@ public class Net : MonoBehaviour
             //count是接收数据的大小
             int count = socket.EndReceive(ar);
             //数据处理
-            string str = System.Text.Encoding.UTF8.GetString(readBuffer, 0, count);
-            if (al.Count > 0) {
-                foreach(NetListener nl in al) {
-                    nl.DealMsg(str);
-                }
+            if (newMsg) {
+                newMsg = false;
+                readCount = count;
+                msgLen = BitConverter.ToInt32(readBuffer, 0);
             }
-            Log("Recv:" + str);
+            else
+            {
+                readCount += count;
+            }
+
+            if(readCount >= msgLen + 4)
+            {
+                newMsg = true;
+                readCount = 0;
+                Log("recv msg length:" + msgLen.ToString());
+                byte[] tmpByte = new byte[msgLen];
+                //Array.Copy(readBuffer, 4, tmpByte,0, msgLen);
+                Log("recv msg:" + System.Text.Encoding.UTF8.GetString(readBuffer, 4, msgLen));
+            }
+
+            if (readCount > readBuffer.Length) {
+                Log("Out of range:" + readCount +  "" + readBuffer.Length);
+            }
+            //string str = System.Text.Encoding.UTF8.GetString(readBuffer, 0, count);
+           // if (al.Count > 0) {
+           //     foreach(NetListener nl in al) {
+           //         nl.DealMsg(str);
+            //    }
+            //}
+            //Log("Recv:" + str);
             //if (recvStr.Length > 300) recvStr = "";
             //recvStr += str + "\n";
             //继续接收    
-            socket.BeginReceive(readBuffer, 0, BUFFER_SIZE, SocketFlags.None, ReceiveCb, null);
+            socket.BeginReceive(readBuffer, (int)readCount, readBuffer.Length - readCount, SocketFlags.None, ReceiveCb, null);
         }
         catch (Exception e)
         {
-            Log("连接已断开:" + e.StackTrace);
+           // e.ToString;
+            Log("连接已断开:" + e.ToString());
             socket.Close();
         }
     }
 
     public void Send(string msg)
         {
-            msg += "\n";
             Int32 len = (Int32) msg.Length;
             byte[] length = BitConverter.GetBytes(len);
             byte[] byteData = System.Text.Encoding.Default.GetBytes(msg);
             byte[] sendbuff  = length.Concat(byteData).ToArray();
         try
             {
-                Debug.Log("Send:" + sendbuff.ToString());
+                Debug.Log("Send:" + msg);
                 socket.Send(sendbuff);
             }
             catch (SocketException ex)
