@@ -290,9 +290,11 @@
   <ItemGroup>
     <Compile Include="Assets\Script\Follow.cs" />
     <Compile Include="Assets\Script\Net.cs" />
+    <Compile Include="Assets\Script\NetController.cs" />
     <Compile Include="Assets\Script\NetListener.cs" />
     <Compile Include="Assets\Script\NetPlayer.cs" />
     <Compile Include="Assets\Script\Player.cs" />
+    <Compile Include="Assets\Script\Protocol.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Target Name="GenerateTargetFrameworkMonikerAttribute" />

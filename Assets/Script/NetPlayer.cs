@@ -8,31 +8,46 @@ public class NetPlayer : MonoBehaviour, NetListener
     private Vector3 reP;
 
 
-    private Vector3 mainPlayer = new Vector3();
+    private new string name = "";
 
-	// Use this for initialization
-	void Start () {
-        reP = GetComponent<Transform>().position - GameObject.Find("Player").GetComponent<Transform>().position;
-        Net.GetNetWork().AddMsgListener(this);//监听msg
 
+    private Vector3 nowPosition = new Vector3();
+
+    // Use this for initialization
+    void Start() {
+        Net.GetNetWork().AddMsgListener(this);
     }
-	
-	// Update is called once per frame
-	void Update () {
-        GetComponent<Transform>().position = mainPlayer + reP;
+
+    // Update is called once per frame
+    void Update() {
+        GetComponent<Transform>().position = nowPosition;
+        //Debug.Log("[" + name + "]:" + GetComponent<Transform>().position.ToString());
     }
 
 
     public void DealMsg(string msg)
     {
         string[] args = msg.Split(' ');
-        if (args.Length != 4 || args[0] != "pos") {
+        if (args.Length != 5 || args[0] != "pos" || args[1] != name)
+        {
             return;
         }
-        mainPlayer.x = float.Parse(args[1]);
-        mainPlayer.y = float.Parse(args[2]);
-        mainPlayer.z = float.Parse(args[3]);
-        Debug.Log("net player recv pos msg:" + msg);
+        Debug.Log("recv new postion:" + name);
+        nowPosition.x = float.Parse(args[2]);
+        nowPosition.y = float.Parse(args[3]);
+        nowPosition.z = float.Parse(args[4]);
+
+
     }
 
+
+    public void SetName(string name) {
+        this.name = name;
+    }
+
+
+
+    public string GetName() {
+        return this.name;
+    }
 }

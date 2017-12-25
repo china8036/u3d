@@ -3,6 +3,8 @@ using UnityEngine;
 using System.Collections;
 using System.Net.Sockets;
 using System.Linq;
+using System.Threading;
+using System.Collections.Generic;
 
 public class Net : MonoBehaviour
 {
@@ -30,9 +32,14 @@ public class Net : MonoBehaviour
 
     Int32 msgLen = 0;
 
+    Queue<string> msgQueue = new Queue<string>();
+
+    Queue<byte[]> msgBufferQueue = new Queue<byte[]>();
+
+
 
     //消息监控
-    private ArrayList al = new ArrayList();
+    private  ArrayList al = new ArrayList();
 
 
     public void Connect()
@@ -51,6 +58,20 @@ public class Net : MonoBehaviour
         Connect();
     }
 
+    void Update()
+    {
+
+        if (msgQueue.Count > 0)
+        {
+            string msg = (string)msgQueue.Dequeue();
+            Debug.Log("update msg :" + msg);
+            foreach (NetListener nl in al)
+            {
+                nl.DealMsg(msg);
+            }
+        }
+    }
+
     //获取Net组件功能
     public static Net GetNetWork() {
         return GameObject.Find(NET_OB_NAME).GetComponent<Net>();
@@ -65,7 +86,39 @@ public class Net : MonoBehaviour
         }
         al.Add(nl);
     }
-    
+
+
+    void JointMsg() {
+        //count是接收数据的大小
+        int count = 0;
+
+
+        //数据处理
+        if (newMsg)
+        {
+            newMsg = false;
+            readCount = count;
+            msgLen = BitConverter.ToInt32(readBuffer, 0);
+        }
+        else
+        {
+            readCount += count;
+        }
+
+        if (readCount >= msgLen + 4)
+        {
+            newMsg = true;
+            readCount = 0;
+            String msg = System.Text.Encoding.UTF8.GetString(readBuffer, 4, msgLen);
+            //msgQueue.Enqueue(msg);
+        }
+
+        if (readCount > readBuffer.Length)
+        {
+            Log("Out of range:" + readCount + "" + readBuffer.Length);
+        }
+
+    }
 
 
     //接收回调
@@ -75,31 +128,13 @@ public class Net : MonoBehaviour
         {
             //count是接收数据的大小
             int count = socket.EndReceive(ar);
-            //数据处理
-            if (newMsg) {
-                newMsg = false;
-                readCount = count;
-                msgLen = BitConverter.ToInt32(readBuffer, 0);
-            }
-            else
-            {
-                readCount += count;
-            }
 
-            if (readCount >= msgLen + 4)
-            {
-                newMsg = true;
-                readCount = 0;
-                Log("recv msg length:" + msgLen.ToString());
-                byte[] tmpByte = new byte[msgLen];
-                recvMsgHandler(System.Text.Encoding.UTF8.GetString(readBuffer, 4, msgLen));
-            }
-
-            if (readCount > readBuffer.Length) {
-                Log("Out of range:" + readCount +  "" + readBuffer.Length);
-            }
+            byte[] tmpBuffer = new byte[count];
+            Array.Copy(readBuffer, tmpBuffer, count);
+            Protocol.DealRevBuffer(tmpBuffer);
+            Array.Clear(readBuffer,0, BUFFER_SIZE);
             //继续接收    
-            socket.BeginReceive(readBuffer, (int)readCount, readBuffer.Length - readCount, SocketFlags.None, ReceiveCb, null);
+            socket.BeginReceive(readBuffer, 0, readBuffer.Length , SocketFlags.None, ReceiveCb, null);
         }
         catch (Exception e)
         {
@@ -110,14 +145,10 @@ public class Net : MonoBehaviour
     }
 
 
-    void recvMsgHandler(string msg) {
-        Log("recv msg:" + msg);
-        if (al.Count > 0) {
-             foreach(NetListener nl in al) {
-                 nl.DealMsg(msg);
-            }
-        }
-    }
+
+
+
+
 
 
     public void Send(string msg)
@@ -128,7 +159,7 @@ public class Net : MonoBehaviour
             byte[] sendbuff  = length.Concat(byteData).ToArray();
         try
             {
-                Debug.Log("Send:" + msg);
+                //Debug.Log("Send:" + msg);
                 socket.Send(sendbuff);
             }
             catch (SocketException ex)

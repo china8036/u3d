@@ -1,16 +1,22 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
 public class Player : MonoBehaviour,NetListener
 {
 
     private Net netWork;
 
+    private string name;
+
+
+    public GameObject netPlayer;
+
 
 	// Use this for initialization
 	void Start ()
 	{
+        
+        name = Random.Range(1f,100f).ToString();
         netWork = Net.GetNetWork();
         //netWork.AddMsgListener(this);
 
@@ -50,6 +56,9 @@ public class Player : MonoBehaviour,NetListener
 
     //发送位置
     void SendPosition() {
-        netWork.Send("pos " + GetComponent<Transform>().position.x + " " + GetComponent<Transform>().position.y + " " + GetComponent<Transform>().position.z);
+        netWork.Send("pos "  +  name + " " + GetComponent<Transform>().position.x + " " + GetComponent<Transform>().position.y + " " + GetComponent<Transform>().position.z);
     }
+
+
+
 }
