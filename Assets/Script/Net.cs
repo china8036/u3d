@@ -61,14 +61,14 @@ public class Net : MonoBehaviour
     void Update()
     {
 
-        if (msgQueue.Count > 0)
+        if (Protocol.msgQueue.Count > 0)
         {
-            string msg = (string)msgQueue.Dequeue();
+            string msg = (string)Protocol.msgQueue.Dequeue();
             Debug.Log("update msg :" + msg);
-            foreach (NetListener nl in al)
-            {
-                nl.DealMsg(msg);
-            }
+            //foreach (NetListener nl in al)
+            //{
+            //    nl.DealMsg(msg);
+            //}
         }
     }
 
