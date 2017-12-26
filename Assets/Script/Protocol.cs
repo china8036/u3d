@@ -8,7 +8,7 @@ public class Protocol {
     //是不是新消息
     static Boolean isNewMsg = true;
 
-    //本次接收的消息长度
+    //本次消息完整长度
     static Int32 tMsgLen = 0;
 
     //本次消息还缺少多长
@@ -29,7 +29,7 @@ public class Protocol {
 
 
     
-    //处理收到的数据 主要处理 粘包 分包问题
+    //处理收到的数据 主要处理 粘包 分包问题 客服端按单线程处理
     public static void DealRevBuffer(byte[] byteArray) {
         int len = byteArray.Length;
         if (isNewMsg)
@@ -75,8 +75,8 @@ public class Protocol {
 
             }
             else 
-            {//本次长度正好
-                isNewMsg = true;//下调按newMsg处理
+            {//本次长度可以拼接完成msg
+                isNewMsg = true;//下次按newMsg处理
                 for (int i = 0; i < tMsgLackLen; i++)
                 {
                     tMsgByte[tMsgLen - tMsgLackLen + i] = byteArray[i];// 赋值给tMsgByte 等下次消息继续拼接
