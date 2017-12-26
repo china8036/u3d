@@ -23,18 +23,11 @@ public class Net : MonoBehaviour
     //port
     const int PORT = 8888;
 
+    //每次处理的msg最大长度
+    const int ONCE_MSG_DEAL_LEN = 10;
+
 
     byte[] readBuffer = new byte[BUFFER_SIZE];
-
-    Boolean newMsg = true;
-
-    Int32 readCount = 0;
-
-    Int32 msgLen = 0;
-
-    Queue<string> msgQueue = new Queue<string>();
-
-    Queue<byte[]> msgBufferQueue = new Queue<byte[]>();
 
 
 
@@ -60,15 +53,16 @@ public class Net : MonoBehaviour
 
     void Update()
     {
-
-        if (Protocol.msgQueue.Count > 0)
+        int dealMsgCount = 0;//归零 每次最多处理 ONCE_MSG_DEAL_LEN
+        while (dealMsgCount < ONCE_MSG_DEAL_LEN && Protocol.msgQueue.Count >0)
         {
             string msg = (string)Protocol.msgQueue.Dequeue();
             Debug.Log("update msg :" + msg);
-            //foreach (NetListener nl in al)
-            //{
-            //    nl.DealMsg(msg);
-            //}
+            foreach (NetListener nl in al)
+            {
+                 nl.DealMsg(msg);
+            }
+            dealMsgCount++;
         }
     }
 
@@ -88,37 +82,7 @@ public class Net : MonoBehaviour
     }
 
 
-    void JointMsg() {
-        //count是接收数据的大小
-        int count = 0;
 
-
-        //数据处理
-        if (newMsg)
-        {
-            newMsg = false;
-            readCount = count;
-            msgLen = BitConverter.ToInt32(readBuffer, 0);
-        }
-        else
-        {
-            readCount += count;
-        }
-
-        if (readCount >= msgLen + 4)
-        {
-            newMsg = true;
-            readCount = 0;
-            String msg = System.Text.Encoding.UTF8.GetString(readBuffer, 4, msgLen);
-            //msgQueue.Enqueue(msg);
-        }
-
-        if (readCount > readBuffer.Length)
-        {
-            Log("Out of range:" + readCount + "" + readBuffer.Length);
-        }
-
-    }
 
 
     //接收回调
