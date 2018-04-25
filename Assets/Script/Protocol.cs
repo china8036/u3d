@@ -1,5 +1,5 @@
 ﻿
-
+using UnityEngine;
 using System;
 using System.Collections.Generic;
 
@@ -16,6 +16,9 @@ public class Protocol {
 
     //本次消息字节数组
     static byte[] tMsgByte;
+
+    //新数据未满4个字节
+    static byte[] waitMsgByte;
 
     //协议中 数据长度存储的字节大小
     const int lenBytesLength = 4;
@@ -34,11 +37,24 @@ public class Protocol {
         int len = byteArray.Length;
         if (isNewMsg)
         {//新的消息
+            if (waitMsgByte != null) {
+                byte[] tmpByte = new byte[waitMsgByte.Length + byteArray.Length];
+                Buffer.BlockCopy(waitMsgByte, 0, tmpByte, 0, waitMsgByte.Length);//这种方法仅适用于字节数组
+                Buffer.BlockCopy(byteArray, 0, tmpByte, waitMsgByte.Length, byteArray.Length);
+                waitMsgByte = null;
+                DealRevBuffer(tmpByte);
+                return;
+            }
+            if (len < 4) {
+                waitMsgByte = byteArray;
+                return;
+            }
             tMsgLen = BitConverter.ToInt32(byteArray, 0);//前四个字节为msg长度
             if ((tMsgLen + 4) <= len)
             { //此byteArray 含有msg的完整记录
                 isNewMsg = true;//递归仍然按新msg处理
-                msgQueue.Enqueue(System.Text.Encoding.UTF8.GetString(byteArray, 4, tMsgLen));//此消息加入队列
+                Protocol.pushMsg(System.Text.Encoding.UTF8.GetString(byteArray, 4, tMsgLen));
+                //msgQueue.Enqueue(System.Text.Encoding.UTF8.GetString(byteArray, 4, tMsgLen));//此消息加入队列
                 if ((tMsgLen + 4) == len) {//正好相等程序处理结束
                     return;
                 }
@@ -81,7 +97,8 @@ public class Protocol {
                 {
                     tMsgByte[tMsgLen - tMsgLackLen + i] = byteArray[i];// 赋值给tMsgByte 等下次消息继续拼接
                 }
-                msgQueue.Enqueue(System.Text.Encoding.UTF8.GetString(tMsgByte));//完成拼接 并把此消息加入队列
+                Protocol.pushMsg(System.Text.Encoding.UTF8.GetString(tMsgByte));
+                //msgQueue.Enqueue(System.Text.Encoding.UTF8.GetString(tMsgByte));//完成拼接 并把此消息加入队列
                 if (tMsgLackLen == len) {
                     tMsgLen = tMsgLackLen = 0;
                     return;//完成拼接
@@ -101,6 +118,11 @@ public class Protocol {
         }
     }
 
+
+    public static void pushMsg(string msg) {
+        Debug.Log("recv:" + msg);
+        msgQueue.Enqueue(msg);//此消息加入队列
+    }
 
 
   

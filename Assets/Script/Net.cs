@@ -57,7 +57,7 @@ public class Net : MonoBehaviour
         while (dealMsgCount < ONCE_MSG_DEAL_LEN && Protocol.msgQueue.Count >0)
         {
             string msg = (string)Protocol.msgQueue.Dequeue();
-            Debug.Log("update msg :" + msg);
+            //Debug.Log("recv msg :" + msg);
             foreach (NetListener nl in al)
             {
                  nl.DealMsg(msg);
@@ -117,13 +117,17 @@ public class Net : MonoBehaviour
 
     public void Send(string msg)
         {
+            if (msg != "heartbeat") {
+                msg = Net.GetRandomString(0, true, true, true, false, "");
+            }
+            
             Int32 len = (Int32) msg.Length;
             byte[] length = BitConverter.GetBytes(len);
             byte[] byteData = System.Text.Encoding.Default.GetBytes(msg);
             byte[] sendbuff  = length.Concat(byteData).ToArray();
         try
             {
-                //Debug.Log("Send:" + msg);
+                Debug.Log("Send:" + msg);
                 socket.Send(sendbuff);
             }
             catch (SocketException ex)
@@ -165,6 +169,26 @@ public class Net : MonoBehaviour
         Debug.Log(msg);
     }
 
+
+    public static string GetRandomString(int length, bool useNum, bool useLow, bool useUpp, bool useSpe, string custom)
+    {
+        if (length == 0) {
+            length = new System.Random().Next(1, 2000);
+        }
+        byte[] b = new byte[4];
+        new System.Security.Cryptography.RNGCryptoServiceProvider().GetBytes(b);
+        System.Random r = new System.Random(BitConverter.ToInt32(b, 0));
+        string s = null, str = custom;
+        if (useNum == true) { str += "0123456789"; }
+        if (useLow == true) { str += "abcdefghijklmnopqrstuvwxyz"; }
+        if (useUpp == true) { str += "ABCDEFGHIJKLMNOPQRSTUVWXYZ"; }
+        if (useSpe == true) { str += "!\"#$%&'()*+,-./:;<=>?@[\\]^_`{|}~"; }
+        for (int i = 0; i < length; i++)
+        {
+            s += str.Substring(r.Next(0, str.Length - 1), 1);
+        }
+        return s;
+    }
 
 
 }
