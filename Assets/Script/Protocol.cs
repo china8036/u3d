@@ -5,6 +5,13 @@ using System.Collections.Generic;
 
 public class Protocol {
 
+    //协议中 数据长度存储的字节大小
+    const int lenBytesLength = 4;
+
+    //msg最长
+    const int MAX_MSG_LEN = 1024;
+
+
     //是不是新消息
     static Boolean isNewMsg = true;
 
@@ -15,14 +22,12 @@ public class Protocol {
     static Int32 tMsgLackLen = 0;
 
     //本次消息字节数组
-    static byte[] tMsgByte;
+    static byte[] tMsgByte = new byte[MAX_MSG_LEN];
 
     //新数据未满4个字节
     static byte[] waitMsgByte;
 
-    //协议中 数据长度存储的字节大小
-    const int lenBytesLength = 4;
-
+ 
 
     //处理完成的 msg记录
     public static Queue<string> msgQueue = new Queue<string>();
@@ -50,11 +55,15 @@ public class Protocol {
                 return;
             }
             tMsgLen = BitConverter.ToInt32(byteArray, 0);//前四个字节为msg长度
+            if (tMsgLen > MAX_MSG_LEN) {
+                Debug.Log("Msg is Too Long");
+                Debug.Log(tMsgLen);
+                return;
+            }
             if ((tMsgLen + 4) <= len)
             { //此byteArray 含有msg的完整记录
                 isNewMsg = true;//递归仍然按新msg处理
                 Protocol.pushMsg(System.Text.Encoding.UTF8.GetString(byteArray, 4, tMsgLen));
-                //msgQueue.Enqueue(System.Text.Encoding.UTF8.GetString(byteArray, 4, tMsgLen));//此消息加入队列
                 if ((tMsgLen + 4) == len) {//正好相等程序处理结束
                     return;
                 }
@@ -69,7 +78,7 @@ public class Protocol {
             else
             {//长度小于msgLen 则此消息不完整
                 isNewMsg = false;
-                tMsgByte = new byte[tMsgLen];//生成本次的数组
+                //tMsgByte = new byte[tMsgLen];//生成本次的数组
                 tMsgLackLen = tMsgLen - len + 4;//剩余长度
                 for (int i = 4; i < len; i++)
                 {
@@ -97,8 +106,7 @@ public class Protocol {
                 {
                     tMsgByte[tMsgLen - tMsgLackLen + i] = byteArray[i];// 赋值给tMsgByte 等下次消息继续拼接
                 }
-                Protocol.pushMsg(System.Text.Encoding.UTF8.GetString(tMsgByte));
-                //msgQueue.Enqueue(System.Text.Encoding.UTF8.GetString(tMsgByte));//完成拼接 并把此消息加入队列
+                Protocol.pushMsg(System.Text.Encoding.UTF8.GetString(tMsgByte, 0, tMsgLen));
                 if (tMsgLackLen == len) {
                     tMsgLen = tMsgLackLen = 0;
                     return;//完成拼接
