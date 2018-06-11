@@ -1,6 +1,5 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
+using Message.Requ;
 public class Player : MonoBehaviour,NetListener
 {
 
@@ -56,7 +55,11 @@ public class Player : MonoBehaviour,NetListener
 
     //发送位置
     void SendPosition() {
-        netWork.Send("pos "  +  name + " " + GetComponent<Transform>().position.x + " " + GetComponent<Transform>().position.y + " " + GetComponent<Transform>().position.z);
+        PositionMsg pmsg = new PositionMsg();
+        pmsg.x = GetComponent<Transform>().position.x;
+        pmsg.y = GetComponent<Transform>().position.y;
+        pmsg.z = GetComponent<Transform>().position.z;
+        netWork.SendMsg(pmsg);
     }
 
 

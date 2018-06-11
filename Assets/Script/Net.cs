@@ -3,8 +3,7 @@ using UnityEngine;
 using System.Collections;
 using System.Net.Sockets;
 using System.Linq;
-using System.Threading;
-using System.Collections.Generic;
+using Message.Requ;
 
 public class Net : MonoBehaviour
 {
@@ -29,6 +28,7 @@ public class Net : MonoBehaviour
 
     byte[] readBuffer = new byte[BUFFER_SIZE];
 
+    System.Timers.Timer t;
 
 
     //消息监控
@@ -48,6 +48,7 @@ public class Net : MonoBehaviour
 
 
     void Start() {
+
         Connect();
     }
 
@@ -104,11 +105,15 @@ public class Net : MonoBehaviour
         {
            // e.ToString;
             Log("连接已断开:" + e.ToString());
+            socket.Shutdown(SocketShutdown.Both);
             socket.Close();
         }
     }
 
 
+    public void SendMsg(RequMsg msg) {
+         Send(JsonUtility.ToJson(msg));
+    }
 
 
 
@@ -117,10 +122,7 @@ public class Net : MonoBehaviour
 
     public void Send(string msg)
         {
-            if (msg != "heartbeat") {
-                msg = Net.GetRandomString(0, true, true, true, false, "");
-            }
-            
+            Debug.Log(msg);
             Int32 len = (Int32) msg.Length;
             byte[] length = BitConverter.GetBytes(len);
             byte[] byteData = System.Text.Encoding.Default.GetBytes(msg);
@@ -132,6 +134,7 @@ public class Net : MonoBehaviour
             }
             catch (SocketException ex)
             {
+                socket.Close();
                 Debug.Log(ex.Message);
             }
         }
@@ -153,7 +156,7 @@ public class Net : MonoBehaviour
 
     //执行心跳
      void HeartBeat() {
-        System.Timers.Timer t = new System.Timers.Timer(1000);//实例化Timer类，设置间隔时间为10000毫秒；
+        t = new System.Timers.Timer(1000);//实例化Timer类，设置间隔时间为10000毫秒；
         t.Elapsed += new System.Timers.ElapsedEventHandler(OnHeartBeat);//到达时间的时候执行事件；
         t.AutoReset = true;// true;//设置是执行一次（false）还是一直执行(true)；
         t.Enabled = true;//是否执行System.Timers.Timer.Elapsed事件；
@@ -161,7 +164,10 @@ public class Net : MonoBehaviour
 
     void OnHeartBeat(object source, System.Timers.ElapsedEventArgs e)
     {
-        Send("heartbeat");
+        if (!socket.Connected) {
+            t.Close();
+        }
+        SendMsg(new HeartBeatMsg());
     }
 
 
@@ -173,7 +179,7 @@ public class Net : MonoBehaviour
     public static string GetRandomString(int length, bool useNum, bool useLow, bool useUpp, bool useSpe, string custom)
     {
         if (length == 0) {
-            length = new System.Random().Next(1, 2000);
+            length = new System.Random().Next(1, 100);
         }
         byte[] b = new byte[4];
         new System.Security.Cryptography.RNGCryptoServiceProvider().GetBytes(b);
