@@ -8,8 +8,8 @@ namespace Message.Requ
     {
         public string data;
 
-        public HeartBeatMsg()
-        {
+        public HeartBeatMsg():base()
+        {  
             this.data = "heart beat!";
             this.ctr = "HearBeat";
         }
