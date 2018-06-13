@@ -4,6 +4,8 @@ using System.Collections;
 using System.Net.Sockets;
 using System.Linq;
 using Message.Requ;
+using Lib;
+using Core;
 
 public class Net : MonoBehaviour
 {
@@ -55,18 +57,17 @@ public class Net : MonoBehaviour
     }
 
     void Update()
+
     {
-        int dealMsgCount = 0;//归零 每次最多处理 ONCE_MSG_DEAL_LEN
-        while (dealMsgCount < ONCE_MSG_DEAL_LEN && Protocol.msgQueue.Count >0)
+        SendMsg(new ClientRequ()); //请求其他端位置
+       if ( Protocol.msgQueue.Count >0)
         {
-            string msg = (string)Protocol.msgQueue.Dequeue();
-            //Debug.Log("recv msg :" + msg);
+            QueueMsg msg = (QueueMsg)Protocol.msgQueue.Dequeue();
             foreach (NetListener nl in al)
             {
-                 nl.DealMsg(msg);
-            }
-            dealMsgCount++;
-        }
+                nl.DealMsg(msg);
+           }
+      }
     }
 
     //获取Net组件功能
@@ -113,18 +114,18 @@ public class Net : MonoBehaviour
     }
 
 
-    public void SendMsg(RequMsg msg) {
+    public void SendMsg(RequBase msg) {
          Send(JsonUtility.ToJson(msg));
     }
 
 
 
+ 
 
 
 
     public void Send(string msg)
         {
-            Debug.Log(msg);
             Int32 len = (Int32) msg.Length;
             byte[] length = BitConverter.GetBytes(len);
             byte[] byteData = System.Text.Encoding.Default.GetBytes(msg);
@@ -166,10 +167,14 @@ public class Net : MonoBehaviour
 
     void OnHeartBeat(object source, System.Timers.ElapsedEventArgs e)
     {
-        if (!socket.Connected) {
+        if (!socket.Connected)
+        {
             t.Close();
         }
-        SendMsg(new HeartBeatMsg());
+        else {
+            SendMsg(new HeartBeatRequ());
+        }
+        
     }
 
 

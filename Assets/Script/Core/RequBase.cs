@@ -1,8 +1,6 @@
-﻿using System;
-using Message;
-namespace Message.Requ
+﻿namespace Core
 {
-    public class RequMsg
+    public class RequBase
     {
 
         public string sid = Net.sid;

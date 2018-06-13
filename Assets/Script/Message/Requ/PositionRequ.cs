@@ -1,4 +1,5 @@
-﻿using System;
+﻿
+using Core;
 
 namespace Message.Requ
 {
@@ -6,7 +7,7 @@ namespace Message.Requ
 
 
     [System.Serializable]
-    public class PositionMsg : RequMsg
+    public class PositionRequ : RequBase
     {
 
         public float x;
@@ -15,7 +16,7 @@ namespace Message.Requ
 
         public float z;
 
-        public PositionMsg():base() {
+        public PositionRequ():base() {
             this.ctr = "Position";
         }
 

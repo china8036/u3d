@@ -1,14 +1,14 @@
-﻿using System;
+﻿using Core;
 
 namespace Message.Requ
 {
 
     [System.Serializable]
-    public class HeartBeatMsg : RequMsg
+    public class HeartBeatRequ : RequBase
     {
         public string data;
 
-        public HeartBeatMsg():base()
+        public HeartBeatRequ():base()
         {  
             this.data = "heart beat!";
             this.ctr = "HearBeat";

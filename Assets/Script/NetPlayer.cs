@@ -1,5 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using Core;
 using UnityEngine;
 
 public class NetPlayer : MonoBehaviour, NetListener
@@ -15,7 +14,7 @@ public class NetPlayer : MonoBehaviour, NetListener
 
     // Use this for initialization
     void Start() {
-        Net.GetNetWork().AddMsgListener(this);
+        //Net.GetNetWork().AddMsgListener(this);
     }
 
     // Update is called once per frame
@@ -24,19 +23,12 @@ public class NetPlayer : MonoBehaviour, NetListener
         //Debug.Log("[" + name + "]:" + GetComponent<Transform>().position.ToString());
     }
 
+    public string GetListenCtr() {
+        return "";
+    }
 
-    public void DealMsg(string msg)
+    public void DealMsg(QueueMsg msg)
     {
-        string[] args = msg.Split(' ');
-        if (args.Length != 5 || args[0] != "pos" || args[1] != name)
-        {
-            return;
-        }
-        Debug.Log("recv new postion:" + name);
-        nowPosition.x = float.Parse(args[2]);
-        nowPosition.y = float.Parse(args[3]);
-        nowPosition.z = float.Parse(args[4]);
-
 
     }
 

@@ -1,11 +1,11 @@
 ﻿using UnityEngine;
 using Message.Requ;
+using Core;
+
 public class Player : MonoBehaviour,NetListener
 {
 
     private Net netWork;
-
-    private string name;
 
 
     public GameObject netPlayer;
@@ -17,11 +17,17 @@ public class Player : MonoBehaviour,NetListener
         
         name = Random.Range(1f,100f).ToString();
         netWork = Net.GetNetWork();
-        //netWork.AddMsgListener(this);
+        netWork.AddMsgListener(this);
 
     }
 
-    public void DealMsg(string msg) {
+    public string GetListenCtr()
+    {
+        return "";
+    }
+
+
+    public void DealMsg(QueueMsg msg) {
         //Debug.Log("player have deal the msg:" + msg);
     }
 	
@@ -55,7 +61,7 @@ public class Player : MonoBehaviour,NetListener
 
     //发送位置
     void SendPosition() {
-        PositionMsg pmsg = new PositionMsg();
+        PositionRequ pmsg = new PositionRequ();
         pmsg.x = GetComponent<Transform>().position.x;
         pmsg.y = GetComponent<Transform>().position.y;
         pmsg.z = GetComponent<Transform>().position.z;
