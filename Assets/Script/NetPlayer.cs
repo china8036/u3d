@@ -7,13 +7,14 @@ public class NetPlayer : MonoBehaviour, NetListener
     private Vector3 reP;
 
 
-    private new string name = "";
+    //private new string name = "";
 
 
-    private Vector3 nowPosition = new Vector3();
+    private Vector3 nowPosition;
 
     // Use this for initialization
     void Start() {
+        nowPosition = this.GetComponent<Transform>().position;
         //Net.GetNetWork().AddMsgListener(this);
     }
 
@@ -32,6 +33,9 @@ public class NetPlayer : MonoBehaviour, NetListener
 
     }
 
+    public void setPosition(Vector3 position) {
+        this.nowPosition = position;
+    }
 
     public void SetName(string name) {
         this.name = name;

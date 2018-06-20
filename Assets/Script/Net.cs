@@ -21,7 +21,7 @@ public class Net : MonoBehaviour
     const int BUFFER_SIZE = 1024;
 
     //host
-    const String HOST = "127.0.0.1";
+    const String HOST = "192.168.1.160";
 
     //port
     const int PORT = 8888;
@@ -59,7 +59,6 @@ public class Net : MonoBehaviour
     void Update()
 
     {
-        SendMsg(new ClientRequ()); //请求其他端位置
        if ( Protocol.msgQueue.Count >0)
         {
             QueueMsg msg = (QueueMsg)Protocol.msgQueue.Dequeue();
@@ -132,7 +131,7 @@ public class Net : MonoBehaviour
             byte[] sendbuff  = length.Concat(byteData).ToArray();
         try
             {
-                Debug.Log("Send:" + msg);
+                //Debug.Log("Send:" + msg);
                 socket.Send(sendbuff);
             }
             catch (SocketException ex)

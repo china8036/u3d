@@ -8,6 +8,9 @@ public class Player : MonoBehaviour,NetListener
     private Net netWork;
 
 
+    private float touchSpeed = 0.1f;
+
+
     public GameObject netPlayer;
 
 
@@ -15,7 +18,7 @@ public class Player : MonoBehaviour,NetListener
 	void Start ()
 	{
         
-        name = Random.Range(1f,100f).ToString();
+        name = Net.sid;
         netWork = Net.GetNetWork();
         netWork.AddMsgListener(this);
 
@@ -36,7 +39,13 @@ public class Player : MonoBehaviour,NetListener
 	{
  
         Vector3 go = new Vector3();
-		if (Input.GetKey (KeyCode.UpArrow)) {
+
+        if (Input.touchCount > 0 && Input.GetTouch(0).phase == TouchPhase.Moved)
+        {
+            Vector2 touchDeltaPosition = Input.GetTouch(0).deltaPosition;
+            go = new Vector3(touchDeltaPosition.x * touchSpeed, touchDeltaPosition.y * touchSpeed, 0.0f);
+        }
+            if (Input.GetKey (KeyCode.UpArrow)) {
 			go = new Vector3 (0.0f, 1.0f, 0.0f);
 		}  
 		if (Input.GetKey (KeyCode.DownArrow)) {

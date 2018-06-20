@@ -1,5 +1,6 @@
 ﻿using Core;
-using System.Collections;
+using Message.Recv;
+using Message.Requ;
 using System.Collections.Generic;
 using UnityEngine;
 
@@ -10,10 +11,10 @@ public class NetController : MonoBehaviour,NetListener {
 
 
     //消息监控
-    private Hashtable al = new Hashtable();
+    //private Hashtable al = new Hashtable();
 
 
-    private Dictionary<string, GameObject> netPlayes = new Dictionary<string, GameObject>();
+    private Dictionary<string, Vector3> netPlayes = new Dictionary<string, Vector3>();
 
 
     // Use this for initialization
@@ -23,16 +24,23 @@ public class NetController : MonoBehaviour,NetListener {
 	
 	// Update is called once per frame
 	void Update () {
-       // foreach (string k in al.Keys) {
-       //     Vector3 tmpv3 = (Vector3)al[k];
-       //     if (!netPlayes.ContainsKey(k))
-       //     {
-       //         GameObject tmpNetPlayer = Instantiate(netPlayer, tmpv3, new Quaternion(0f, 0f, 0f, 0f));
-       //         tmpNetPlayer.GetComponent<NetPlayer>().SetName(k);
-      //          netPlayes.Add(k, tmpNetPlayer);
-      //      }
-      //  }
+        Net.GetNetWork().SendMsg(new ClientRequ());
 
+        foreach (string clientId in netPlayes.Keys) {
+            GameObject tPlayer = GameObject.Find(clientId);
+            if (tPlayer == null)
+            {
+                Debug.Log("new:" + clientId + "  position:" + netPlayes[clientId]);
+                tPlayer = Instantiate(netPlayer, netPlayes[clientId], new Quaternion(0f, 0f, 0f, 0f));
+                tPlayer.GetComponent<NetPlayer>().SetName(clientId);
+            }
+            else {
+                Debug.Log("update:" + tPlayer.name + " position:" + netPlayes[clientId]);
+                tPlayer.GetComponent<NetPlayer>().setPosition(netPlayes[clientId]);
+                //tPlayer.GetComponent<Transform>().position = netPlayes[clientId];
+                Debug.Log("After Update Position:" + tPlayer.GetComponent<Transform>().position);
+            }
+        }
     }
 
     public string GetListenCtr() {
@@ -41,21 +49,23 @@ public class NetController : MonoBehaviour,NetListener {
 
     public void DealMsg(QueueMsg msg)
     {
-        Debug.Log("netController:" + msg);
-        //string[] args = msg.Split(' ');
-        //if (args.Length != 5 || args[0] != "pos")
-        //{
-       //     return;
-       // }
-        //Vector3 mainPlayer = new Vector3();
-       // mainPlayer.x = float.Parse(args[2]);
-       // mainPlayer.y = float.Parse(args[3]);
-       // mainPlayer.z = float.Parse(args[4]);
-        //if (!al.Contains(args[1]))
-       // {
-            //Debug.Log("new:[" + args[1] + "]" + mainPlayer.ToString());
-       //     al.Add(args[1], mainPlayer);
-       // }
+        PositionMsg pmsg = JsonUtility.FromJson<PositionMsg>(msg.msg);
+        if (string.IsNullOrEmpty(pmsg.data.id)) {
+            return;
+        }
+        Vector3 mainPlayer = new Vector3();
+        mainPlayer.x = pmsg.data.x;
+        mainPlayer.y = pmsg.data.y;
+        mainPlayer.z = pmsg.data.z;
+        if (netPlayes.ContainsKey(pmsg.data.id))
+        {
+            netPlayes[pmsg.data.id] = mainPlayer;
+        }
+        else {
+            netPlayes.Add(pmsg.data.id, mainPlayer);
+
+        }
+
       
         //Debug.Log("net controller recv pos msg:" + msg);
     }

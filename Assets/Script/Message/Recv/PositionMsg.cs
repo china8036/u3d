@@ -16,10 +16,12 @@ namespace Message.Recv
     public class Position
     {
 
-        public Int32 x;
+        public float x;
 
-        public Int32 y;
+        public float y;
 
-        public Int32 z;
+        public float z;
+
+        public string id;
     }
 }
