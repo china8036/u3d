@@ -17,6 +17,9 @@ public class Player : MonoBehaviour, NetListener
     public bool isMainPlay = false;
 
 
+    private bool initReport = false;
+
+
     // public GameObject netPlayer;
 
 
@@ -81,6 +84,11 @@ public class Player : MonoBehaviour, NetListener
         }
         else
         {//如果不是主机 则上报操作给主机
+
+            if (!initReport) {
+                SendPosition();
+                initReport = true;
+            }
             OperateRequ operateRequ = new OperateRequ();
             operateRequ.x = force.x;
             operateRequ.y = force.y;
@@ -96,7 +104,7 @@ public class Player : MonoBehaviour, NetListener
 
     void LateUpdate()
     {
-        if (isMainPlay)
+        if (isMainPlay )//没有初始化上报 或者是主机
         {
             SendPosition();//发送位置信息
         }
