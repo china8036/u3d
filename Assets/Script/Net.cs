@@ -62,6 +62,7 @@ public class Net : MonoBehaviour
        if ( Protocol.msgQueue.Count >0)
         {
             QueueMsg msg = (QueueMsg)Protocol.msgQueue.Dequeue();
+            Debug.Log("rec:" + msg.msg);
             foreach (NetListener nl in al)
             {
                 nl.DealMsg(msg);
@@ -131,7 +132,7 @@ public class Net : MonoBehaviour
             byte[] sendbuff  = length.Concat(byteData).ToArray();
         try
             {
-                //Debug.Log("Send:" + msg);
+                Debug.Log("Send:" + msg);
                 socket.Send(sendbuff);
             }
             catch (SocketException ex)

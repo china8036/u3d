@@ -26,7 +26,7 @@ GameObject:
   - component: {fileID: 54776356044144498}
   m_Layer: 0
   m_Name: NetPlayer
-  m_TagString: Untagged
+  m_TagString: NetPlayerTag
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0

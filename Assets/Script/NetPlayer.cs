@@ -1,4 +1,5 @@
 ﻿using Core;
+using Message.Requ;
 using UnityEngine;
 
 public class NetPlayer : MonoBehaviour, NetListener
@@ -46,4 +47,19 @@ public class NetPlayer : MonoBehaviour, NetListener
     public string GetName() {
         return this.name;
     }
+
+    void LateUpdate()
+    {
+        if (GameObject.Find(Net.sid).GetComponent<Player>().isMainPlay)
+        {//上报位置信息
+            PositionRequ pmsg = new PositionRequ();
+            pmsg.x = GetComponent<Transform>().position.x;
+            pmsg.y = GetComponent<Transform>().position.y;
+            pmsg.z = GetComponent<Transform>().position.z;
+            pmsg.sid = this.name;
+            Net.GetNetWork().SendMsg(pmsg);
+        }
+    }
+
+
 }

@@ -5,9 +5,9 @@ namespace Message.Requ
 {
 
 
-    //上报位置
+    //上报客服端操作
     [System.Serializable]
-    public class PositionRequ : RequBase
+    public class OperateRequ : RequBase
     {
 
         public float x;
@@ -16,8 +16,8 @@ namespace Message.Requ
 
         public float z;
 
-        public PositionRequ():base() {
-            this.ctr = "Position";
+        public OperateRequ():base() {
+            this.ctr = "Operate";
         }
 
        
