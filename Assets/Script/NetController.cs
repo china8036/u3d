@@ -33,25 +33,6 @@ public class NetController : MonoBehaviour, NetListener
         {
             Net.GetNetWork().SendMsg(new ClientOperateRequ());
         }
-
-
-        // foreach (string clientId in netPlayes.Keys)
-        // {
-        //     GameObject tPlayer = GameObject.Find(clientId);
-        //     if (tPlayer == null)
-        //    {
-        //        Debug.Log("new:" + clientId + "  position:" + netPlayes[clientId]);
-        //        tPlayer = Instantiate(netPlayer, netPlayes[clientId], new Quaternion(0f, 0f, 0f, 0f));
-        //        tPlayer.GetComponent<NetPlayer>().SetName(clientId);
-        //     }
-        //     else
-        //    {
-        //        Debug.Log("update:" + tPlayer.name + " position:" + netPlayes[clientId]);
-        //        tPlayer.GetComponent<NetPlayer>().setPosition(netPlayes[clientId]);
-        //        //tPlayer.GetComponent<Transform>().position = netPlayes[clientId];
-        //        Debug.Log("After Update Position:" + tPlayer.GetComponent<Transform>().position);
-        //    }
-        // }
     }
 
     public string GetListenCtr()
@@ -61,9 +42,15 @@ public class NetController : MonoBehaviour, NetListener
 
     public void DealMsg(QueueMsg msg)
     {
-        Debug.Log("netController rev msg:" + msg.msg);
-        dealOpera(msg);
-        dealPositon(msg);
+        //Debug.Log("netController rev msg:" + msg.msg);
+		if (GameObject.Find (Net.sid).GetComponent<Player> ().isMainPlay) {
+			dealOpera(msg);
+			
+		} 
+
+		dealPositon(msg);
+        
+        
     }
 
     private void dealOpera(QueueMsg msg)
@@ -75,15 +62,15 @@ public class NetController : MonoBehaviour, NetListener
             {
                 return;
             }
-            Debug.Log("netController rev operate msg:" + msg.msg);
+            //Debug.Log("netController rev operate msg:" + msg.msg);
             GameObject tPlayer = GameObject.Find(operaMsg.data.operateId);
             if (tPlayer == null)
             {
-                tPlayer = Instantiate(netPlayer, new Vector3(), new Quaternion(0f, 0f, 0f, 0f));
-                tPlayer.GetComponent<NetPlayer>().SetName(operaMsg.data.operateId);
-                return;
+				return;
+                //tPlayer = Instantiate(netPlayer, new Vector3(-4f,1f, 0f), new Quaternion(0f, 0f, 0f, 0f));
+                //tPlayer.GetComponent<NetPlayer>().SetName(operaMsg.data.operateId);
             }
-            tPlayer.GetComponent<Rigidbody>().AddForce(new Vector3(operaMsg.data.x, operaMsg.data.y, operaMsg.data.z));
+            tPlayer.GetComponent<NetPlayer>().setForce(new Vector3(operaMsg.data.x, operaMsg.data.y, operaMsg.data.z));
 
         }
     }
@@ -95,7 +82,10 @@ public class NetController : MonoBehaviour, NetListener
         {
             return;
         }
-        Debug.Log("netController rev position msg:" + msg.msg);
+		//if (pmsg.data.id == Net.sid && GameObject.Find (Net.sid).GetComponent<Player> ().isMainPlay) {
+		//	return;		
+		//}
+        //Debug.Log("netController rev position msg:" + msg.msg);
         GameObject tPlayer = GameObject.Find(pmsg.data.id);
         Vector3 mainPlayer = new Vector3();
         mainPlayer.x = pmsg.data.x;

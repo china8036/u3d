@@ -29,6 +29,11 @@ public class Player : MonoBehaviour, NetListener
         name = Net.sid;
         netWork = Net.GetNetWork();
         netWork.AddMsgListener(this);
+        netWork.SendMsg(new PositionRequ());//初始化
+        SendPosition();
+		if (!isMainPlay) {
+			Destroy (GetComponent<Rigidbody>());
+		}
 
     }
 
@@ -85,10 +90,7 @@ public class Player : MonoBehaviour, NetListener
         else
         {//如果不是主机 则上报操作给主机
 
-            if (!initReport) {
-                SendPosition();
-                initReport = true;
-            }
+       
             OperateRequ operateRequ = new OperateRequ();
             operateRequ.x = force.x;
             operateRequ.y = force.y;
