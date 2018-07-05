@@ -4,17 +4,19 @@ using UnityEngine;
 
 public class Follow : MonoBehaviour {
 
-	public GameObject player;
+	public static string mainCameraName = "MainCamera";
+
+	private GameObject player;
 
 	private Vector3 relPosition;
 
-	// Use this for initialization
-	void Start () {
-		relPosition = player.GetComponent<Transform> ().position - GetComponent<Transform> ().position;
-	}
+
 	
 	// Update is called once per frame
 	void Update () {
+		if (player == null) {
+			return;
+		}
         if (Input.GetKey(KeyCode.A))
         {
             GetComponent<Transform>().Rotate(new Vector3(0.0f, -0.5f, 0f));
@@ -27,5 +29,10 @@ public class Follow : MonoBehaviour {
         GetComponent<Transform> ().position = player.GetComponent<Transform> ().position - this.relPosition;
 
 		
+	}
+
+	public void setPlayer(GameObject player){
+		this.player = player;
+		relPosition = player.GetComponent<Transform> ().position - GetComponent<Transform> ().position;
 	}
 }

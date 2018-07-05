@@ -22,6 +22,8 @@ namespace Message.Recv
 
         public float z;
 
+		public double t;
+
         public string operateId;
     }
 }

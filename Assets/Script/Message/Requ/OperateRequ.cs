@@ -16,6 +16,8 @@ namespace Message.Requ
 
         public float z;
 
+		public double  t;
+
         public OperateRequ():base() {
             this.ctr = "Operate";
         }
