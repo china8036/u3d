@@ -73,6 +73,7 @@ public class NetController : MonoBehaviour, NetListener
 		if (tPlayer != null) {
 			Destroy (tPlayer);
 		}
+		Debug.Log ("rec inti positon:" + playerV.ToString());
 		if (initPlayerMsg.data.isMaster) {
 			tPlayer = Instantiate (masterPlayer, playerV, new Quaternion (0f, 0f, 0f, 0f));
 		} else {
@@ -107,16 +108,17 @@ public class NetController : MonoBehaviour, NetListener
 	private void dealPositon (QueueMsg msg)
 	{
 		PositionMsg pmsg = JsonUtility.FromJson<PositionMsg> (msg.msg);
-		if (string.IsNullOrEmpty (pmsg.data.id)) {
+		if (string.IsNullOrEmpty (pmsg.data.positionId)) {
 			return;
 		}
-		GameObject tPlayer = GameObject.Find (pmsg.data.id);
+		GameObject tPlayer = GameObject.Find (pmsg.data.positionId);
 		Vector3 mainPlayer = new Vector3 ();
 		mainPlayer.x = pmsg.data.x;
 		mainPlayer.y = pmsg.data.y;
 		mainPlayer.z = pmsg.data.z;
 		if (tPlayer == null) {
-			Debug.Log ("update positon fail :[" + pmsg.data.id + "] not found");
+			tPlayer = Instantiate (netPlayer, mainPlayer, new Quaternion (0f, 0f, 0f, 0f));
+			tPlayer.GetComponent<NetObject> ().SetName (pmsg.data.positionId);
 		} else {
 			tPlayer.GetComponent<NetObject> ().setPosition (mainPlayer);
 		}

@@ -51,7 +51,7 @@ public class NetPlayer : Player, NetListener
 			pmsg.x = GetComponent<Transform> ().position.x;
 			pmsg.y = GetComponent<Transform> ().position.y;
 			pmsg.z = GetComponent<Transform> ().position.z;
-			pmsg.sid = this.name;
+			pmsg.positionId = this.name;
 			Net.GetNetWork ().SendRequ (pmsg);
 		}
 	}

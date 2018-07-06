@@ -24,6 +24,7 @@ GameObject:
   - component: {fileID: 23397178028072046}
   - component: {fileID: 114720927927060692}
   - component: {fileID: 54175730322835044}
+  - component: {fileID: 114503787463003014}
   m_Layer: 0
   m_Name: NetPlayer
   m_TagString: NetPlayerTag
@@ -112,6 +113,17 @@ BoxCollider:
   serializedVersion: 2
   m_Size: {x: 1, y: 1, z: 1}
   m_Center: {x: 0, y: 0, z: 0}
+--- !u!114 &114503787463003014
+MonoBehaviour:
+  m_ObjectHideFlags: 1
+  m_PrefabParentObject: {fileID: 0}
+  m_PrefabInternal: {fileID: 100100000}
+  m_GameObject: {fileID: 1671726006915362}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 896a2125b225708419a8faf1898de4f7, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
 --- !u!114 &114720927927060692
 MonoBehaviour:
   m_ObjectHideFlags: 1

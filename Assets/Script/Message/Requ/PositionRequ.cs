@@ -16,6 +16,9 @@ namespace Message.Requ
 
         public float z;
 
+
+		public string positionId;
+
         public PositionRequ():base() {
             this.ctr = "Position";
         }

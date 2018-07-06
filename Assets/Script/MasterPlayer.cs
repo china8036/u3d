@@ -81,6 +81,7 @@ public class MasterPlayer : MonoBehaviour, NetListener
 		pmsg.x = GetComponent<Transform> ().position.x;
 		pmsg.y = GetComponent<Transform> ().position.y;
 		pmsg.z = GetComponent<Transform> ().position.z;
+		pmsg.positionId = pmsg.sid;
 		netWork.SendRequ (pmsg);
 	}
 
