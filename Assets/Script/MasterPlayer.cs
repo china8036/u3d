@@ -9,7 +9,7 @@ public class MasterPlayer : MonoBehaviour, NetListener
 	private Net netWork;
 
 
-	private float forceScale = 100f;
+	private float forceScale = 30f;
 
 
 
@@ -43,7 +43,7 @@ public class MasterPlayer : MonoBehaviour, NetListener
 
 		if (Input.touchCount > 0 && Input.GetTouch (0).phase == TouchPhase.Moved) {
 			Vector2 touchDeltaPosition = Input.GetTouch (0).deltaPosition;
-			go = new Vector3 (touchDeltaPosition.x, touchDeltaPosition.y, 0.0f);
+			go = new Vector3 (touchDeltaPosition.x,  0f, touchDeltaPosition.y);
 		}
 		if (Input.GetKey (KeyCode.UpArrow)) {
 			go = new Vector3 (0.0f, 0.0f, 1.0f);
@@ -81,6 +81,10 @@ public class MasterPlayer : MonoBehaviour, NetListener
 		pmsg.x = GetComponent<Transform> ().position.x;
 		pmsg.y = GetComponent<Transform> ().position.y;
 		pmsg.z = GetComponent<Transform> ().position.z;
+		pmsg.rw = GetComponent<Transform> ().rotation.w;
+		pmsg.rx = GetComponent<Transform> ().rotation.x;
+		pmsg.ry = GetComponent<Transform> ().rotation.y;
+		pmsg.rz = GetComponent<Transform> ().rotation.z;
 		pmsg.positionId = pmsg.sid;
 		netWork.SendRequ (pmsg);
 	}

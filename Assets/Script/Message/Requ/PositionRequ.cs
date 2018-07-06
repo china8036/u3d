@@ -17,6 +17,16 @@ namespace Message.Requ
         public float z;
 
 
+		public float rx;
+
+		public float ry;
+
+
+		public float rz;
+
+		public  float rw;
+
+
 		public string positionId;
 
         public PositionRequ():base() {

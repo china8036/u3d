@@ -23,6 +23,7 @@ public class NetPlayer : Player, NetListener
 		
 		} else {//slave 更新位置
 			GetComponent<Transform> ().position = GetComponent<NetObject> ().getPosition();
+			GetComponent<Transform> ().rotation = GetComponent<NetObject> ().getQuaternion();
 		}
         
 
@@ -51,6 +52,10 @@ public class NetPlayer : Player, NetListener
 			pmsg.x = GetComponent<Transform> ().position.x;
 			pmsg.y = GetComponent<Transform> ().position.y;
 			pmsg.z = GetComponent<Transform> ().position.z;
+			pmsg.rw = GetComponent<Transform> ().rotation.w;
+			pmsg.rx = GetComponent<Transform> ().rotation.x;
+			pmsg.ry = GetComponent<Transform> ().rotation.y;
+			pmsg.rz = GetComponent<Transform> ().rotation.z;
 			pmsg.positionId = this.name;
 			Net.GetNetWork ().SendRequ (pmsg);
 		}

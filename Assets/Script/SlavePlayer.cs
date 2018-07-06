@@ -42,11 +42,12 @@ public class SlavePlayer : MonoBehaviour, NetListener
 	void Update ()
 	{
 		GetComponent<Transform> ().position = GetComponent<NetObject> ().getPosition();//更新为服务器上位置
+		GetComponent<Transform> ().rotation = GetComponent<NetObject> ().getQuaternion();
 		Vector3 go = new Vector3 ();
 
 		if (Input.touchCount > 0 && Input.GetTouch (0).phase == TouchPhase.Moved) {
 			Vector2 touchDeltaPosition = Input.GetTouch (0).deltaPosition;
-			go = new Vector3 (touchDeltaPosition.x, touchDeltaPosition.y, 0.0f);
+			go = new Vector3 (touchDeltaPosition.x, 0f, touchDeltaPosition.y);
 		}
 		if (Input.GetKey (KeyCode.UpArrow)) {
 			go = new Vector3 (0.0f, 0.0f, 1.0f);

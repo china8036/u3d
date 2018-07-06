@@ -113,14 +113,20 @@ public class NetController : MonoBehaviour, NetListener
 		}
 		GameObject tPlayer = GameObject.Find (pmsg.data.positionId);
 		Vector3 mainPlayer = new Vector3 ();
+		Quaternion playerQua = new Quaternion ();
 		mainPlayer.x = pmsg.data.x;
 		mainPlayer.y = pmsg.data.y;
 		mainPlayer.z = pmsg.data.z;
+		playerQua.x = pmsg.data.rx;
+		playerQua.y = pmsg.data.ry;
+		playerQua.z = pmsg.data.rz;
+		playerQua.w = pmsg.data.rw;
 		if (tPlayer == null) {
 			tPlayer = Instantiate (netPlayer, mainPlayer, new Quaternion (0f, 0f, 0f, 0f));
 			tPlayer.GetComponent<NetObject> ().SetName (pmsg.data.positionId);
 		} else {
 			tPlayer.GetComponent<NetObject> ().setPosition (mainPlayer);
+			tPlayer.GetComponent<NetObject> ().setQuaternion (playerQua);
 		}
 	}
 }

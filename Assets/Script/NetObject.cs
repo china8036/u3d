@@ -6,11 +6,14 @@ public class NetObject:MonoBehaviour
 {
 	protected Vector3 nowPosition;
 
+	protected Quaternion nowQuaternion;
+
 	protected Queue<Vector3> forceQueue = new Queue<Vector3>(); 
 
 	void Start ()
 	{
 		this.nowPosition = GetComponent<Transform> ().position;
+		this.nowQuaternion = GetComponent<Transform> ().rotation;
 	}
 
 
@@ -19,9 +22,20 @@ public class NetObject:MonoBehaviour
 		this.nowPosition = position;
 	}
 
+	public void setQuaternion(Quaternion quaternion){
+		this.nowQuaternion = quaternion;
+	}
+
+
 	public Vector3  getPosition(){
 		return this.nowPosition;
 	}
+
+	public Quaternion getQuaternion(){
+
+		return this.nowQuaternion;
+	}
+
 
 	public Vector3 getForce(){
 		if (this.forceQueue.Count > 0) {
